@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -13,52 +12,63 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
 
 export function ProductDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [formData, setFormData] = useState({
+    nombre: "",
+    sku: "",
+    codigo_ean: "",
+    marca: "",
+    modelo: "",
+    stock_minimo: 0,
+    stock_maximo: 0,
+    precio_venta: 0,
+    ubicacion_fisica: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const nombre = formData.get("nombre") as string;
-    const sku = formData.get("sku") as string;
-    const codigo_ean = formData.get("codigo_ean") as string;
-    const stock_actual = parseInt(formData.get("stock_actual") as string) || 0;
-    const stock_minimo = parseInt(formData.get("stock_minimo") as string) || 0;
-    const precio_venta = parseFloat(formData.get("precio_venta") as string) || 0;
-    const ultimo_costo = parseFloat(formData.get("ultimo_costo") as string) || 0;
-
-    const { error } = await supabase.from("productos").insert({
-      nombre,
-      sku: sku || null,
-      codigo_ean: codigo_ean || null,
-      stock_actual,
-      stock_minimo,
-      precio_venta,
-      ultimo_costo: ultimo_costo || null,
-    });
+    const { error } = await supabase.from("productos").insert([
+      {
+        ...formData,
+        stock_actual: 0,
+      },
+    ]);
 
     if (error) {
       toast({
+        variant: "destructive",
         title: "Error",
         description: "No se pudo crear el producto: " + error.message,
-        variant: "destructive",
       });
     } else {
       toast({
         title: "Producto creado",
-        description: "El producto se ha agregado correctamente",
+        description: "El producto se creó exitosamente",
+      });
+      setOpen(false);
+      setFormData({
+        nombre: "",
+        sku: "",
+        codigo_ean: "",
+        marca: "",
+        modelo: "",
+        stock_minimo: 0,
+        stock_maximo: 0,
+        precio_venta: 0,
+        ubicacion_fisica: "",
       });
       queryClient.invalidateQueries({ queryKey: ["productos"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
-      setOpen(false);
-      (e.target as HTMLFormElement).reset();
     }
 
     setLoading(false);
@@ -76,7 +86,7 @@ export function ProductDialog() {
         <DialogHeader>
           <DialogTitle>Nuevo Producto</DialogTitle>
           <DialogDescription>
-            Completa la información del producto para agregarlo al inventario
+            Completa la información del producto
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -85,86 +95,83 @@ export function ProductDialog() {
               <Label htmlFor="nombre">Nombre *</Label>
               <Input
                 id="nombre"
-                name="nombre"
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 required
-                disabled={loading}
-                placeholder="Nombre del producto"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="sku">SKU</Label>
               <Input
                 id="sku"
-                name="sku"
-                disabled={loading}
-                placeholder="Código SKU"
+                value={formData.sku}
+                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="codigo_ean">Código EAN/Barras</Label>
               <Input
                 id="codigo_ean"
-                name="codigo_ean"
-                disabled={loading}
-                placeholder="Código de barras"
+                value={formData.codigo_ean}
+                onChange={(e) => setFormData({ ...formData, codigo_ean: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="stock_actual">Stock Actual *</Label>
+              <Label htmlFor="marca">Marca</Label>
               <Input
-                id="stock_actual"
-                name="stock_actual"
-                type="number"
-                min="0"
-                defaultValue="0"
-                required
-                disabled={loading}
+                id="marca"
+                value={formData.marca}
+                onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="stock_minimo">Stock Mínimo *</Label>
+              <Label htmlFor="modelo">Modelo</Label>
+              <Input
+                id="modelo"
+                value={formData.modelo}
+                onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ubicacion_fisica">Ubicación Física</Label>
+              <Input
+                id="ubicacion_fisica"
+                placeholder="P-3, E-B, Nivel-2"
+                value={formData.ubicacion_fisica}
+                onChange={(e) => setFormData({ ...formData, ubicacion_fisica: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stock_minimo">Stock Mínimo</Label>
               <Input
                 id="stock_minimo"
-                name="stock_minimo"
                 type="number"
-                min="0"
-                defaultValue="0"
-                required
-                disabled={loading}
+                value={formData.stock_minimo}
+                onChange={(e) => setFormData({ ...formData, stock_minimo: parseInt(e.target.value) || 0 })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="precio_venta">Precio Venta *</Label>
+              <Label htmlFor="stock_maximo">Stock Máximo</Label>
+              <Input
+                id="stock_maximo"
+                type="number"
+                value={formData.stock_maximo}
+                onChange={(e) => setFormData({ ...formData, stock_maximo: parseInt(e.target.value) || 0 })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="precio_venta">Precio de Venta</Label>
               <Input
                 id="precio_venta"
-                name="precio_venta"
                 type="number"
                 step="0.01"
-                min="0"
-                defaultValue="0"
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ultimo_costo">Último Costo</Label>
-              <Input
-                id="ultimo_costo"
-                name="ultimo_costo"
-                type="number"
-                step="0.01"
-                min="0"
-                disabled={loading}
+                value={formData.precio_venta}
+                onChange={(e) => setFormData({ ...formData, precio_venta: parseFloat(e.target.value) || 0 })}
               />
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>

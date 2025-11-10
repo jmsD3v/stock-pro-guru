@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { ProviderDialog } from "@/components/ProviderDialog";
+import { ProveedorDialog } from "@/components/ProveedorDialog";
 import {
   Table,
   TableBody,
@@ -42,7 +42,7 @@ export default function Proveedores() {
           <h1 className="text-3xl font-bold text-foreground">Proveedores</h1>
           <p className="text-muted-foreground">Gestión de proveedores y sus catálogos</p>
         </div>
-        <ProviderDialog />
+        <ProveedorDialog />
       </div>
 
       <div className="flex items-center gap-2">

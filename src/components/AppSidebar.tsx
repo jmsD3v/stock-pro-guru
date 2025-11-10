@@ -33,16 +33,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
 
   const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo cerrar sesión",
-        variant: "destructive",
-      });
-    } else {
-      navigate("/auth");
-    }
+    await signOut();
   };
 
   return (
