@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { ProductFormData } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -21,15 +22,15 @@ export function ProductDialog() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     nombre: "",
     sku: "",
     codigo_ean: "",
     marca: "",
     modelo: "",
-    stock_minimo: 0,
-    stock_maximo: 0,
-    precio_venta: 0,
+    stock_minimo: "",
+    stock_maximo: "",
+    precio_venta: "",
     ubicacion_fisica: "",
   });
 
@@ -39,7 +40,15 @@ export function ProductDialog() {
 
     const { error } = await supabase.from("productos").insert([
       {
-        ...formData,
+        nombre: formData.nombre,
+        sku: formData.sku,
+        codigo_ean: formData.codigo_ean,
+        marca: formData.marca,
+        modelo: formData.modelo,
+        stock_minimo: parseInt(formData.stock_minimo) || 0,
+        stock_maximo: parseInt(formData.stock_maximo) || 0,
+        precio_venta: parseFloat(formData.precio_venta) || 0,
+        ubicacion_fisica: formData.ubicacion_fisica,
         stock_actual: 0,
       },
     ]);
@@ -62,9 +71,9 @@ export function ProductDialog() {
         codigo_ean: "",
         marca: "",
         modelo: "",
-        stock_minimo: 0,
-        stock_maximo: 0,
-        precio_venta: 0,
+        stock_minimo: "",
+        stock_maximo: "",
+        precio_venta: "",
         ubicacion_fisica: "",
       });
       queryClient.invalidateQueries({ queryKey: ["productos"] });
@@ -147,7 +156,7 @@ export function ProductDialog() {
                 id="stock_minimo"
                 type="number"
                 value={formData.stock_minimo}
-                onChange={(e) => setFormData({ ...formData, stock_minimo: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, stock_minimo: e.target.value })}
               />
             </div>
             <div className="space-y-2">
@@ -156,7 +165,7 @@ export function ProductDialog() {
                 id="stock_maximo"
                 type="number"
                 value={formData.stock_maximo}
-                onChange={(e) => setFormData({ ...formData, stock_maximo: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, stock_maximo: e.target.value })}
               />
             </div>
             <div className="space-y-2">
@@ -166,7 +175,7 @@ export function ProductDialog() {
                 type="number"
                 step="0.01"
                 value={formData.precio_venta}
-                onChange={(e) => setFormData({ ...formData, precio_venta: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, precio_venta: e.target.value })}
               />
             </div>
           </div>
