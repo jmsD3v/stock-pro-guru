@@ -10,6 +10,8 @@ export interface Product {
   dimensiones?: string;
   material?: string;
   compatibilidad?: string;
+  descripcion?: string;
+  descuento_porcentaje?: number;
   categoria_id?: string;
   subcategoria_id?: string;
   stock_actual: number;
