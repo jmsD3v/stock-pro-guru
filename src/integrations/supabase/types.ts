@@ -146,6 +146,8 @@ export type Database = {
           codigo_interno_proveedor: string | null
           compatibilidad: string | null
           created_at: string | null
+          descripcion: string | null
+          descuento_porcentaje: number | null
           dimensiones: string | null
           fecha_ultima_entrada: string | null
           id: string
@@ -171,6 +173,8 @@ export type Database = {
           codigo_interno_proveedor?: string | null
           compatibilidad?: string | null
           created_at?: string | null
+          descripcion?: string | null
+          descuento_porcentaje?: number | null
           dimensiones?: string | null
           fecha_ultima_entrada?: string | null
           id?: string
@@ -196,6 +200,8 @@ export type Database = {
           codigo_interno_proveedor?: string | null
           compatibilidad?: string | null
           created_at?: string | null
+          descripcion?: string | null
+          descuento_porcentaje?: number | null
           dimensiones?: string | null
           fecha_ultima_entrada?: string | null
           id?: string
