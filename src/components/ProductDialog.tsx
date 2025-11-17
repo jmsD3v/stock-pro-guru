@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { ProductFormData } from "@/types";
+import type { Product, ProductFormData } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 
-export function ProductDialog() {
+interface ProductDialogProps {
+  product?: Product;
+  trigger?: React.ReactNode;
+}
+
+export function ProductDialog({ product, trigger }: ProductDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -34,24 +39,42 @@ export function ProductDialog() {
     ubicacion_fisica: "",
   });
 
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        nombre: product.nombre,
+        sku: product.sku || "",
+        codigo_ean: product.codigo_ean || "",
+        marca: product.marca || "",
+        modelo: product.modelo || "",
+        stock_minimo: product.stock_minimo?.toString() || "",
+        stock_maximo: product.stock_maximo?.toString() || "",
+        precio_venta: product.precio_venta?.toString() || "",
+        ubicacion_fisica: product.ubicacion_fisica || "",
+      });
+    }
+  }, [product]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.from("productos").insert([
-      {
-        nombre: formData.nombre,
-        sku: formData.sku,
-        codigo_ean: formData.codigo_ean,
-        marca: formData.marca,
-        modelo: formData.modelo,
-        stock_minimo: parseInt(formData.stock_minimo) || 0,
-        stock_maximo: parseInt(formData.stock_maximo) || 0,
-        precio_venta: parseFloat(formData.precio_venta) || 0,
-        ubicacion_fisica: formData.ubicacion_fisica,
-        stock_actual: 0,
-      },
-    ]);
+    const productData = {
+      nombre: formData.nombre,
+      sku: formData.sku,
+      codigo_ean: formData.codigo_ean,
+      marca: formData.marca,
+      modelo: formData.modelo,
+      stock_minimo: parseInt(formData.stock_minimo) || 0,
+      stock_maximo: parseInt(formData.stock_maximo) || 0,
+      precio_venta: parseFloat(formData.precio_venta) || 0,
+      ubicacion_fisica: formData.ubicacion_fisica,
+      ...(product ? {} : { stock_actual: 0 }),
+    };
+
+    const { error } = product
+      ? await supabase.from("productos").update(productData).eq("id", product.id)
+      : await supabase.from("productos").insert([productData]);
 
     if (error) {
       toast({
@@ -61,8 +84,10 @@ export function ProductDialog() {
       });
     } else {
       toast({
-        title: "Producto creado",
-        description: "El producto se creó exitosamente",
+        title: product ? "Producto actualizado" : "Producto creado",
+        description: product 
+          ? "El producto se actualizó exitosamente" 
+          : "El producto se creó exitosamente",
       });
       setOpen(false);
       setFormData({
@@ -86,14 +111,16 @@ export function ProductDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Agregar Producto
-        </Button>
+        {trigger || (
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Agregar Producto
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nuevo Producto</DialogTitle>
+          <DialogTitle>{product ? "Editar" : "Nuevo"} Producto</DialogTitle>
           <DialogDescription>
             Completa la información del producto
           </DialogDescription>
@@ -180,12 +207,12 @@ export function ProductDialog() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Guardando..." : "Guardar Producto"}
-            </Button>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Guardando..." : (product ? "Actualizar" : "Guardar") + " Producto"}
+              </Button>
           </div>
         </form>
       </DialogContent>

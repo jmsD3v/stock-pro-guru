@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { ProveedorFormData } from "@/types";
+import type { Proveedor, ProveedorFormData } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 
-export function ProveedorDialog() {
+interface ProveedorDialogProps {
+  proveedor?: Proveedor;
+  trigger?: React.ReactNode;
+}
+
+export function ProveedorDialog({ proveedor, trigger }: ProveedorDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -30,11 +35,25 @@ export function ProveedorDialog() {
     condiciones_pago: "",
   });
 
+  useEffect(() => {
+    if (proveedor) {
+      setFormData({
+        nombre: proveedor.nombre,
+        contacto: proveedor.contacto || "",
+        telefono: proveedor.telefono || "",
+        email: proveedor.email || "",
+        condiciones_pago: proveedor.condiciones_pago || "",
+      });
+    }
+  }, [proveedor]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.from("proveedores").insert([formData]);
+    const { error } = proveedor
+      ? await supabase.from("proveedores").update(formData).eq("id", proveedor.id)
+      : await supabase.from("proveedores").insert([formData]);
 
     if (error) {
       toast({
@@ -44,8 +63,10 @@ export function ProveedorDialog() {
       });
     } else {
       toast({
-        title: "Proveedor creado",
-        description: "El proveedor se creó exitosamente",
+        title: proveedor ? "Proveedor actualizado" : "Proveedor creado",
+        description: proveedor 
+          ? "El proveedor se actualizó exitosamente" 
+          : "El proveedor se creó exitosamente",
       });
       setOpen(false);
       setFormData({
@@ -65,14 +86,16 @@ export function ProveedorDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Agregar Proveedor
-        </Button>
+        {trigger || (
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Agregar Proveedor
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Nuevo Proveedor</DialogTitle>
+          <DialogTitle>{proveedor ? "Editar" : "Nuevo"} Proveedor</DialogTitle>
           <DialogDescription>
             Completa la información del proveedor
           </DialogDescription>
@@ -125,12 +148,12 @@ export function ProveedorDialog() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Guardando..." : "Guardar Proveedor"}
-            </Button>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Guardando..." : (proveedor ? "Actualizar" : "Guardar") + " Proveedor"}
+              </Button>
           </div>
         </form>
       </DialogContent>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, ChevronDown, ChevronRight, Pencil } from "lucide-react";
 import { ProductDialog } from "@/components/ProductDialog";
 import { ProductoProveedorDialog } from "@/components/ProductoProveedorDialog";
 import { ProductoProveedoresList } from "@/components/ProductoProveedoresList";
@@ -31,7 +31,12 @@ export default function Productos() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("productos")
-        .select("*, categorias(nombre), subcategorias(nombre)")
+        .select(`
+          *, 
+          categorias(nombre), 
+          subcategorias(nombre),
+          producto_proveedor(proveedores(nombre))
+        `)
         .order("nombre");
       
       if (error) throw error;
@@ -39,11 +44,18 @@ export default function Productos() {
     },
   });
 
-  const filteredProductos = productos?.filter((p) =>
-    p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.codigo_ean?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProductos = productos?.filter((p) => {
+    const searchLower = searchTerm.toLowerCase();
+    const proveedores = p.producto_proveedor?.map((pp: any) => pp.proveedores?.nombre || "").join(" ").toLowerCase() || "";
+    
+    return (
+      p.nombre.toLowerCase().includes(searchLower) ||
+      p.sku?.toLowerCase().includes(searchLower) ||
+      p.codigo_ean?.toLowerCase().includes(searchLower) ||
+      p.marca?.toLowerCase().includes(searchLower) ||
+      proveedores.includes(searchLower)
+    );
+  });
 
   const toggleRow = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -69,7 +81,7 @@ export default function Productos() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre, SKU o código EAN..."
+            placeholder="Buscar por nombre, SKU, código, marca o proveedor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -88,6 +100,7 @@ export default function Productos() {
               <TableHead>Stock</TableHead>
               <TableHead>Precio Venta</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead className="w-[80px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -146,10 +159,20 @@ export default function Productos() {
                           {producto.activo ? "Activo" : "Inactivo"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <ProductDialog
+                          product={producto}
+                          trigger={
+                            <Button variant="ghost" size="icon">
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          }
+                        />
+                      </TableCell>
                     </TableRow>
                     <CollapsibleContent asChild>
                       <TableRow>
-                        <TableCell colSpan={7} className="bg-muted/50 p-6">
+                        <TableCell colSpan={8} className="bg-muted/50 p-6">
                           <div className="space-y-4">
                             <div className="flex items-center justify-between">
                               <h3 className="text-sm font-semibold">Proveedores Asociados</h3>

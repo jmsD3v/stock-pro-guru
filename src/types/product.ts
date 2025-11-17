@@ -12,6 +12,7 @@ export interface Product {
   compatibilidad?: string;
   descripcion?: string;
   descuento_porcentaje?: number;
+  imagen_url?: string;
   categoria_id?: string;
   subcategoria_id?: string;
   stock_actual: number;
