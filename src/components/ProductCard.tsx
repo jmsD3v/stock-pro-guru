@@ -96,7 +96,7 @@ export const ProductCard = ({ product, suppliers = [] }: ProductCardProps) => {
                     )}
                   </span>
                   <span className="text-muted-foreground">
-                    ${supplier.precio_costo.toFixed(2)}
+                    ${supplier.precio_costo?.toFixed(2) || "0.00"}
                   </span>
                 </div>
               ))}

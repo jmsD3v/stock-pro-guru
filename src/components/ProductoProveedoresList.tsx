@@ -122,7 +122,7 @@ export function ProductoProveedoresList({ productoId }: ProductoProveedoresListP
                 {asociacion.proveedores?.nombre || "—"}
               </TableCell>
               <TableCell>{asociacion.codigo_proveedor || "—"}</TableCell>
-              <TableCell>${asociacion.precio_costo.toFixed(2)}</TableCell>
+              <TableCell>${asociacion.precio_costo?.toFixed(2) || "0.00"}</TableCell>
               <TableCell>
                 {asociacion.es_proveedor_principal && (
                   <Badge variant="default">
