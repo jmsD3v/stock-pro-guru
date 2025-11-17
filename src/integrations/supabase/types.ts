@@ -89,6 +89,104 @@ export type Database = {
           },
         ]
       }
+      orden_compra_detalle: {
+        Row: {
+          cantidad: number
+          created_at: string
+          id: string
+          orden_compra_id: string
+          precio_unitario: number
+          producto_id: string
+          subtotal: number
+        }
+        Insert: {
+          cantidad: number
+          created_at?: string
+          id?: string
+          orden_compra_id: string
+          precio_unitario: number
+          producto_id: string
+          subtotal: number
+        }
+        Update: {
+          cantidad?: number
+          created_at?: string
+          id?: string
+          orden_compra_id?: string
+          precio_unitario?: number
+          producto_id?: string
+          subtotal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orden_compra_detalle_orden_compra_id_fkey"
+            columns: ["orden_compra_id"]
+            isOneToOne: false
+            referencedRelation: "ordenes_compra"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orden_compra_detalle_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "productos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ordenes_compra: {
+        Row: {
+          created_at: string
+          estado: string
+          fecha_entrega_estimada: string | null
+          fecha_orden: string
+          id: string
+          impuestos: number | null
+          numero_orden: string
+          observaciones: string | null
+          proveedor_id: string | null
+          subtotal: number | null
+          total: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          estado?: string
+          fecha_entrega_estimada?: string | null
+          fecha_orden?: string
+          id?: string
+          impuestos?: number | null
+          numero_orden: string
+          observaciones?: string | null
+          proveedor_id?: string | null
+          subtotal?: number | null
+          total?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          estado?: string
+          fecha_entrega_estimada?: string | null
+          fecha_orden?: string
+          id?: string
+          impuestos?: number | null
+          numero_orden?: string
+          observaciones?: string | null
+          proveedor_id?: string | null
+          subtotal?: number | null
+          total?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ordenes_compra_proveedor_id_fkey"
+            columns: ["proveedor_id"]
+            isOneToOne: false
+            referencedRelation: "proveedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       producto_proveedor: {
         Row: {
           codigo_proveedor: string | null
@@ -151,6 +249,7 @@ export type Database = {
           dimensiones: string | null
           fecha_ultima_entrada: string | null
           id: string
+          imagen_url: string | null
           marca: string | null
           material: string | null
           modelo: string | null
@@ -178,6 +277,7 @@ export type Database = {
           dimensiones?: string | null
           fecha_ultima_entrada?: string | null
           id?: string
+          imagen_url?: string | null
           marca?: string | null
           material?: string | null
           modelo?: string | null
@@ -205,6 +305,7 @@ export type Database = {
           dimensiones?: string | null
           fecha_ultima_entrada?: string | null
           id?: string
+          imagen_url?: string | null
           marca?: string | null
           material?: string | null
           modelo?: string | null

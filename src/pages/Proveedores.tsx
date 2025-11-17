@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { ProveedorDialog } from "@/components/ProveedorDialog";
+import { Pencil } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -67,6 +69,7 @@ export default function Proveedores() {
               <TableHead>Email</TableHead>
               <TableHead>Condiciones de Pago</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead className="w-[80px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,7 +81,7 @@ export default function Proveedores() {
               </TableRow>
             ) : filteredProveedores?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No se encontraron proveedores. Comienza agregando uno nuevo.
                 </TableCell>
               </TableRow>
@@ -94,6 +97,16 @@ export default function Proveedores() {
                     <Badge variant={proveedor.activo ? "default" : "secondary"}>
                       {proveedor.activo ? "Activo" : "Inactivo"}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <ProveedorDialog
+                      proveedor={proveedor}
+                      trigger={
+                        <Button variant="ghost" size="icon">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ))

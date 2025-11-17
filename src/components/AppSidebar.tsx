@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Users, TrendingDown, FileText, LogOut, BookOpen } from "lucide-react";
+import { LayoutDashboard, Package, Users, TrendingDown, FileText, LogOut, BookOpen, ArrowRightLeft, ShoppingCart } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,8 @@ const menuItems = [
   { title: "Catálogo", url: "/catalogo", icon: BookOpen },
   { title: "Productos", url: "/productos", icon: Package },
   { title: "Proveedores", url: "/proveedores", icon: Users },
+  { title: "Movimientos", url: "/movimientos", icon: ArrowRightLeft },
+  { title: "Órdenes Compra", url: "/ordenes-compra", icon: ShoppingCart },
   { title: "Alertas Stock", url: "/alertas", icon: TrendingDown },
   { title: "Reportes", url: "/reportes", icon: FileText },
 ];
