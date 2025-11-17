@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { DashboardLayout } from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Productos from "./pages/Productos";
+import Catalogo from "./pages/Catalogo";
 import Proveedores from "./pages/Proveedores";
 import Alertas from "./pages/Alertas";
 import Reportes from "./pages/Reportes";
@@ -27,6 +28,7 @@ const App = () => (
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/productos" element={<Productos />} />
+              <Route path="/catalogo" element={<Catalogo />} />
               <Route path="/proveedores" element={<Proveedores />} />
               <Route path="/alertas" element={<Alertas />} />
               <Route path="/reportes" element={<Reportes />} />
