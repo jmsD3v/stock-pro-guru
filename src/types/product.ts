@@ -37,4 +37,5 @@ export interface ProductFormData {
   stock_maximo: string;
   precio_venta: string;
   ubicacion_fisica: string;
+  imagen_url: string;
 }
