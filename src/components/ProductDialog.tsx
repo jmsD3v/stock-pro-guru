@@ -37,6 +37,7 @@ export function ProductDialog({ product, trigger }: ProductDialogProps) {
     stock_maximo: "",
     precio_venta: "",
     ubicacion_fisica: "",
+    imagen_url: "",
   });
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function ProductDialog({ product, trigger }: ProductDialogProps) {
         stock_maximo: product.stock_maximo?.toString() || "",
         precio_venta: product.precio_venta?.toString() || "",
         ubicacion_fisica: product.ubicacion_fisica || "",
+        imagen_url: product.imagen_url || "",
       });
     }
   }, [product]);
@@ -69,6 +71,7 @@ export function ProductDialog({ product, trigger }: ProductDialogProps) {
       stock_maximo: parseInt(formData.stock_maximo) || 0,
       precio_venta: parseFloat(formData.precio_venta) || 0,
       ubicacion_fisica: formData.ubicacion_fisica,
+      imagen_url: formData.imagen_url,
       ...(product ? {} : { stock_actual: 0 }),
     };
 
@@ -100,6 +103,7 @@ export function ProductDialog({ product, trigger }: ProductDialogProps) {
         stock_maximo: "",
         precio_venta: "",
         ubicacion_fisica: "",
+        imagen_url: "",
       });
       queryClient.invalidateQueries({ queryKey: ["productos"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
@@ -203,6 +207,16 @@ export function ProductDialog({ product, trigger }: ProductDialogProps) {
                 step="0.01"
                 value={formData.precio_venta}
                 onChange={(e) => setFormData({ ...formData, precio_venta: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="imagen_url">URL de Imagen</Label>
+              <Input
+                id="imagen_url"
+                type="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                value={formData.imagen_url}
+                onChange={(e) => setFormData({ ...formData, imagen_url: e.target.value })}
               />
             </div>
           </div>
