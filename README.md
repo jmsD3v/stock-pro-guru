@@ -1,73 +1,29 @@
-# Welcome to your Lovable project
+# StockPro — Gestión de Inventario
 
-## Project info
+Sistema de gestión de inventario: catálogo de productos, proveedores, órdenes de compra, movimientos de stock y alertas.
 
-**URL**: https://lovable.dev/projects/a3c878f8-84d5-4416-986b-faca3b93e3a0
+## Qué hace
 
-## How can I edit this code?
+- **Productos y catálogo** — categorías y subcategorías, ficha por producto.
+- **Proveedores** — relación producto-proveedor (`producto_proveedor`).
+- **Órdenes de compra** — cabecera + detalle (`ordenes_compra` / `orden_compra_detalle`).
+- **Movimientos de stock** — entradas y salidas (`movimientos_stock`).
+- **Alertas** — quiebres/bajo stock.
+- **Reportes** — vista consolidada de movimientos y compras.
+- **Auth** — login con roles (`profiles` + `user_roles`).
 
-There are several ways of editing your application.
+## Stack
 
-**Use Lovable**
+React 18 + TypeScript + Vite, shadcn/ui sobre Radix, Tailwind, React Router, React Query, React Hook Form + Zod, Supabase (Postgres + Auth) como backend.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a3c878f8-84d5-4416-986b-faca3b93e3a0) and start prompting.
+## Estado actual
 
-Changes made via Lovable will be committed automatically to this repo.
+Esquema completo y migrado (`categorias`, `productos`, `proveedores`, `movimientos_stock`, `ordenes_compra`, etc.), pero es el que menos terminado llegó de la tanda: nunca se le escribió ni una descripción propia. **La instancia de Supabase original no está conectada** — para levantarlo hay que crear un proyecto nuevo, correr las migraciones de `supabase/migrations/` y completar `.env` a partir de `.env.example`.
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Desarrollo local
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
+cp .env.example .env   # completar con las credenciales del proyecto Supabase
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a3c878f8-84d5-4416-986b-faca3b93e3a0) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
